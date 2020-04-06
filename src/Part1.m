@@ -1,4 +1,4 @@
-[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0,0.2,1000);
+[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0,0.2,100);
 C
 G
 voltage_step=20;
@@ -14,15 +14,14 @@ end
 
 figure(1)
 hold on;
-plot(Nodal_Voltage(1,:),Nodal_Voltage(2,:));
-plot(Nodal_Voltage(1,:),Nodal_Voltage(3,:));
+plot(Nodal_Voltage(1,:),Nodal_Voltage(2,:),'Color','black');
+plot(Nodal_Voltage(1,:),Nodal_Voltage(3,:),'Color','red');
 hold off;
 legend('V_O','V_3');
 title('Output voltage and V3 as functions of Input voltage');
 ylabel('Voltage');
 xlabel('V_i');
 
-%% Part c
 voltage_step=2000;
 Nodal_VoltageAC=zeros(2,voltage_step);
 Nodal_VoltageAC(1,:)=linspace(0,500,voltage_step);
@@ -35,20 +34,20 @@ for ii=1:voltage_step
 end
 
 figure(2)
-plot(Nodal_VoltageAC(1,:),real(Nodal_VoltageAC(2,:)));
+plot(Nodal_VoltageAC(1,:),real(Nodal_VoltageAC(2,:)),'Color','black');
 title('Output Voltage as a Function of Angular Frequency');
 legend('V_O')
 ylabel('V_O');
-xlabel('\omega (radians/s)');
+xlabel('\omega');
 
 figure(3)
-semilogx(Nodal_VoltageAC(1,:),20*log10(real(Nodal_VoltageAC(2,:))./Vin));
+semilogx(Nodal_VoltageAC(1,:),20*log10(real(Nodal_VoltageAC(2,:))./Vin),'Color','black');
 title('Gain as a Function of Angular Frequency');
+axis([0 700 -8 6])
 legend('dB(V_O/V_i)');
 ylabel('Gain')
 xlabel('\omega');
 
-%% Part d
 Vin=1;
 omega=pi;
 counter=10000;
@@ -61,7 +60,7 @@ for ii=1:counter
     Nodal_Voltage_VarryingC(1,ii)=V(5);
 end
 figure(4);
-histogram(real(Nodal_Voltage_VarryingC),50);
+histogram(real(Nodal_Voltage_VarryingC),20,'FaceColor','red');
 title('Histogram of Gain for variations in Capacitance');
 ylabel('Count')
 xlabel('Gain');

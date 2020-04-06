@@ -1,7 +1,7 @@
-[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0.00001,0.2,1000);
+[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0.00001,0.2,100);
 C
 G
-jj = 1;
+iter = 1;
 for timesteps = 1000:9000:10000
 C_n = 0.00001; 
 real_time=1;
@@ -14,8 +14,8 @@ Nodal_Voltage_withNoise=zeros(3,3,timesteps+1);
 waveform=zeros(3,timesteps+1);
 
 for source=1:3
-    for ii=1:timesteps
-        waveform(source,ii)=exp(-(ii*stepsize-0.1)^2/(2*0.03^2));
+    for i=1:timesteps
+        waveform(source,i)=exp(-(i*stepsize-0.1)^2/(2*0.03^2));
     end
 end
 
@@ -29,18 +29,18 @@ for source=1:3
     end
     C(3,:)=[0 0 Cn_mod 0 0 0]; 
     Vold=[0; 0; 0; 0; 0; 0];
-    for ii=1:timesteps
+    for i=1:timesteps
         
-        Vin=waveform(source,ii);
+        Vin=waveform(source,i);
 
         In=0.001*randn();
         F=[Vin; 0; -In; 0; 0; 0];
-        Nodal_Voltage_withNoise(source,1,ii+1)=ii*stepsize;
-        Nodal_Voltage_withNoise(source,2,ii+1)=Vin;
+        Nodal_Voltage_withNoise(source,1,i+1)=i*stepsize;
+        Nodal_Voltage_withNoise(source,2,i+1)=Vin;
         
         A=C/stepsize+G;
         V=(A)\(C*Vold/stepsize+F);
-        Nodal_Voltage_withNoise(source,3,ii+1)=V(5);
+        Nodal_Voltage_withNoise(source,3,i+1)=V(5);
 
         Vold=V;
     end  
@@ -51,8 +51,8 @@ end
         mu(:,:)=Nodal_Voltage_withNoise(row,:,:);
         figure(11)
         hold on;
-        plot(mu(1,:),mu(2,:));
-        plot(mu(1,:),mu(3,:));
+        plot(mu(1,:),mu(2,:),'Color','black');
+        plot(mu(1,:),mu(3,:),'Color','red');
         hold off;
         legend('V_i','V_O');
         title('Voltages for Gaussian Pulse Input with Noise');
@@ -63,8 +63,8 @@ end
         X=fft(mu(2,:));
         Y=fft(mu(3,:));
         hold on;
-        plot(finite,fftshift(abs(X)));
-        plot(finite,fftshift(abs(Y)));
+        plot(finite,fftshift(abs(X)),'Color','black');
+        plot(finite,fftshift(abs(Y)),'Color','red');
         hold off;
         legend('V_i','V_O');
         title('Frequency Domain for Gaussian Pulse Input with Noise');
@@ -77,11 +77,11 @@ end
         figure(13)
         subplot(3,1,1)
         hold on;
-        plot(mu(1,:),mu(2,:));
-        plot(mu(1,:),mu(3,:));
+        plot(mu(1,:),mu(2,:),'Color','black');
+        plot(mu(1,:),mu(3,:),'Color','red');
         hold off;
         legend('V_i','V_O');
-        title({'Voltages with Noise for Capacitance Cn=10\mu F'});
+        title('Voltages with Noise for Varrying Capacitance, Cn=10\mu F');
         ylabel('Voltage');
         xlabel('Time');
 
@@ -90,8 +90,8 @@ end
         mili(:,:)=Nodal_Voltage_withNoise(row,:,:);
         subplot(3,1,2)
         hold on;
-        plot(mili(1,:),mili(2,:));
-        plot(mili(1,:),mili(3,:));
+        plot(mili(1,:),mili(2,:),'Color','black');
+        plot(mili(1,:),mili(3,:),'Color','red');
         hold off;
         legend('V_i','V_O');
         title('Cn=1mF');
@@ -103,29 +103,67 @@ end
         mili_ten(:,:)=Nodal_Voltage_withNoise(row,:,:);
         subplot(3,1,3)
         hold on;
-        plot(mili_ten(1,:),mili_ten(2,:));
-        plot(mili_ten(1,:),mili_ten(3,:));
+        plot(mili_ten(1,:),mili_ten(2,:),'Color','black');
+        plot(mili_ten(1,:),mili_ten(3,:),'Color','red');
         hold off;
         legend('V_i','V_O');
         title('Cn=10mF');
         ylabel('Voltage');
         xlabel('Time'); 
+        
+        figure(14)
+        subplot(3,1,1);
+        X=fft(mu(2,:));
+        Y=fft(mu(3,:));
+        hold on;
+        plot(finite_difference,fftshift(abs(X)),'Color','black');
+        plot(finite_difference,fftshift(abs(Y)),'Color','red');
+        hold off;
+        axis([-30 30 0 130])
+        legend('V_i','V_O');
+        title('Frequency Domain for Cn = 10\mu(F)');
+        ylabel('Magnitude');
+        xlabel('Frequency');
+        X=fft(mili(2,:));
+        Y=fft(mili(3,:));
+        subplot(3,1,2);
+        hold on;
+        plot(finite_difference,fftshift(abs(X)),'Color','black');
+        plot(finite_difference,fftshift(abs(Y)),'Color','red');
+        hold off;
+        axis([-30 30 0 130])
+        legend('V_i','V_O');
+        title('Frequency Domain for Cn = 10\mu(F)');
+        ylabel('Magnitude');
+        xlabel('Frequency');
+        X=fft(mili_ten(2,:));
+        Y=fft(mili_ten(3,:));
+        subplot(3,1,3);
+        hold on;
+        plot(finite_difference,fftshift(abs(X)),'Color','black');
+        plot(finite_difference,fftshift(abs(Y)),'Color','red');
+        hold off;
+        axis([-30 30 0 500])
+        legend('V_i','V_O');
+        title('Frequency Domain for Cn = 10\mu(F)');
+        ylabel('Magnitude');
+        xlabel('Frequency');
     end
 
-    figure(14)
-    subplot(2,1,jj)
+    figure(15)
+    subplot(2,1,iter)
     row=1;
     mu=zeros(3,timesteps+1);
     mu(:,:)=Nodal_Voltage_withNoise(row,:,:);
     hold on;
-    plot(mu(1,:),mu(2,:));
-    plot(mu(1,:),mu(3,:));
+    plot(mu(1,:),mu(2,:),'Color','black');
+    plot(mu(1,:),mu(3,:),'Color','red');
     hold off;
     legend('V_i','V_O');
-    title({'Voltages with Noise for Different Timesteps'; '\fontsize{10}1 000 timesteps'});
+    title(['Voltages with Noise for Different Timesteps. ',num2str(timesteps),' timesteps']);
     ylabel('Voltage');
     xlabel('Time');
-    jj = jj + 1; 
+    iter = iter + 1; 
 end
 
 

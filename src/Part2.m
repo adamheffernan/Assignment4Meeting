@@ -1,12 +1,11 @@
-[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0,0.2,1000);
-C
-G
+[C,G] = modelGenerator(1,2,55,0.1,1000,0.25,0,0.2,100);
+
 timesteps=1000;
 real_time=1;
 stepsize=real_time/timesteps;
 step=1/stepsize;
-n_Q2=timesteps+1;
-finite_difference=(-(n_Q2-1)/2:(n_Q2-1)/2)*(step/n_Q2);
+elements=timesteps+1;
+finite_difference=(-(elements-1)/2:(elements-1)/2)*(step/elements);
 % initial
 Nodal_Step_Transient=zeros(3,3,timesteps+1);
 Vold=[0; 0; 0; 0; 0; 0];
@@ -47,8 +46,8 @@ Step=zeros(3,timesteps+1);
 Step(:,:)=Nodal_Step_Transient(row,:,:);
 figure(5)
 hold on;
-plot(Step(1,:),Step(2,:));
-plot(Step(1,:),Step(3,:));
+plot(Step(1,:),Step(2,:),'Color','black');
+plot(Step(1,:),Step(3,:),'Color','red');
 hold off;
 legend('V_i','V_O');
 title('Steps for Step Input');
@@ -60,8 +59,8 @@ Sine=zeros(3,timesteps+1);
 Sine(:,:)=Nodal_Step_Transient(row,:,:);
 figure(6)
 hold on;
-plot(Sine(1,:),Sine(2,:));
-plot(Sine(1,:),Sine(3,:));
+plot(Sine(1,:),Sine(2,:),'Color','black');
+plot(Sine(1,:),Sine(3,:),'Color','red');
 hold off;
 legend('V_i','V_O');
 title('Steps for Sinusoidal Input with f=33.3Hz');
@@ -73,8 +72,8 @@ Guass=zeros(3,timesteps+1);
 Guass(:,:)=Nodal_Step_Transient(row,:,:);
 figure(7)
 hold on;
-plot(Guass(1,:),Guass(2,:));
-plot(Guass(1,:),Guass(3,:));
+plot(Guass(1,:),Guass(2,:),'Color','black');
+plot(Guass(1,:),Guass(3,:),'Color','red');
 hold off;
 legend('V_i','V_O');
 title('Steps for Gaussian Pulse Input');
@@ -85,10 +84,11 @@ figure(8)
 X=fft(Step(2,:));
 Y=fft(Step(3,:));
 hold on;
-plot(finite_difference,fftshift(abs(X)));
-plot(finite_difference,fftshift(abs(Y)));
+plot(finite_difference,fftshift(abs(X)),'Color','black');
+plot(finite_difference,fftshift(abs(Y)),'Color','red');
 hold off;
 legend('V_i','V_O');
+axis([-100 100 0 1400])
 title('Frequency Domain for Step Input');
 ylabel('Magnitude');
 xlabel('Frequency');
@@ -97,9 +97,10 @@ figure(9)
 X=fft(Sine(2,:));
 Y=fft(Sine(3,:));
 hold on;
-plot(finite_difference,fftshift(abs(X)));
-plot(finite_difference,fftshift(abs(Y)));
+plot(finite_difference,fftshift(abs(X)),'Color','black');
+plot(finite_difference,fftshift(abs(Y)),'Color','red');
 hold off;
+axis([-200 200 0 600])
 legend('V_i','V_O');
 title('Frequency Domain for Sinusoidal Input with f=33.3Hz');
 ylabel('Magnitude');
@@ -109,9 +110,10 @@ figure(10)
 X=fft(Guass(2,:));
 Y=fft(Guass(3,:));
 hold on;
-plot(finite_difference,fftshift(abs(X)));
-plot(finite_difference,fftshift(abs(Y)));
+plot(finite_difference,fftshift(abs(X)),'Color','black');
+plot(finite_difference,fftshift(abs(Y)),'Color','red');
 hold off;
+axis([-100 100 0 130])
 legend('V_i','V_O');
 title('Frequency Domain for Gaussian Pulse Input');
 ylabel('Magnitude');
